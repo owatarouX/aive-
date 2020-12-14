@@ -22,7 +22,6 @@ void CBullet::Init()
 	m_moveVal.y = 15.0f;
 
 	m_bAlive = false;
-	m_scrollPos = { 0,0 };
 }
 
 void CBullet::Updata()
@@ -46,13 +45,12 @@ void CBullet::Updata()
 	}
 	
 
-	//移動行列
-	m_mat = DirectX::XMMatrixTranslation(m_pos.x-m_scrollPos.x, m_pos.y - m_scrollPos.y, 0.0f);
+	//移動行列作成
+	m_mat = DirectX::XMMatrixTranslation(m_pos.x, m_pos.y, 0.0f);
 
 
 }
 
-//描画
 void CBullet::Draw()
 {
 	if (!m_bAlive) return;
@@ -61,13 +59,11 @@ void CBullet::Draw()
 	SHADER.m_spriteShader.DrawTex(m_pTexture, Math::Rectangle(0, 0, 16, 16), 1.0f);
 }
 
-//生存フラグ取得
 const bool CBullet::IsAlive()
 {
 	return m_bAlive;
 }
 
-//テクスチャ設定
 void CBullet::SetTexture(KdTexture* apTexture)
 {
 	//ポインタのアドレスが正常か調べる(nullならセットしない)
@@ -82,7 +78,13 @@ void CBullet::SetAlive(const float bAlive)
 	m_bAlive = bAlive;
 }
 
-//発射処理
+void CBullet::SetOwner(Scene* apOwner)
+{
+	if (apOwner == nullptr) return;
+
+	m_pOwner = apOwner;
+}
+
 void CBullet::Shot(const Math::Vector2 aShotPos, const int aShotDirection)
 {
 	//生存フラグON
@@ -109,11 +111,6 @@ const Math::Vector2 CBullet::GetMove()
 const float CBullet::GetRadius()
 {
 	return m_radius;
-}
-
-void CBullet::SetScrollPos(Math::Vector2 scrPos)
-{
-	m_scrollPos = scrPos;
 }
 
 

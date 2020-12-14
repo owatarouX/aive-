@@ -5,10 +5,10 @@
 bool Utility::bHitCheck(Math::Vector2 aScrPos, Math::Vector2 aScrMove, Math::Vector2 aDestPos, float aScrRad, float aDesRad)
 {
 	//キャラ1の現在座標の四辺
-	const float aScrLeft = aScrPos.x - aScrRad;		//左辺
-	const float aScrRight = aScrPos.x + aScrRad;		//右辺
-	const float aScrTop = aScrPos.y + aScrRad;		//上辺
-	const float aScrBottom = aScrPos.y - aScrRad;		//下辺
+	const float aScrLeft = aScrPos.x - Infor::RADIUS_32;		//左辺
+	const float aScrRight = aScrPos.x + Infor::RADIUS_32;		//右辺
+	const float aScrTop = aScrPos.y + Infor::RADIUS_32;		//上辺
+	const float aScrBottom = aScrPos.y - Infor::RADIUS_32;		//下辺
 
 	//キャラ1の未来座標の四辺
 	const float nextLeft = aScrLeft + aScrMove.x;				//左辺
@@ -17,10 +17,10 @@ bool Utility::bHitCheck(Math::Vector2 aScrPos, Math::Vector2 aScrMove, Math::Vec
 	const float nextBottom = aScrBottom + aScrMove.y;			//下辺
 
 	//キャラ2の現在座標の四辺
-	const float aDestLeft = aDestPos.x - aDesRad;	//左辺
-	const float aDestRight = aDestPos.x + aDesRad;	//右辺
-	const float aDestTop = aDestPos.y + aDesRad;	//上辺
-	const float aDestBottom = aDestPos.y - aDesRad;	//下辺
+	const float aDestLeft = aDestPos.x - Infor::RADIUS_32;	//左辺
+	const float aDestRight = aDestPos.x + Infor::RADIUS_32;	//右辺
+	const float aDestTop = aDestPos.y + Infor::RADIUS_32;	//上辺
+	const float aDestBottom = aDestPos.y - Infor::RADIUS_32;	//下辺
 
 	/* 現在座標 :左右当たり判定*/
 	if (aScrRight > aDestLeft && aScrLeft < aDestRight)
@@ -58,10 +58,10 @@ bool Utility::bHitCheck(Math::Vector2 aScrPos, Math::Vector2 aScrMove, Math::Vec
 int Utility::iHitCheck(Math::Vector2 aScrPos, Math::Vector2 aScrMove, float aDestPosX, float aDestPosY, float aScrRad, float aDesRad)
 {
 	//キャラ1の現在座標の四辺
-	const float aScrLeft = aScrPos.x - aScrRad;		//左辺
-	const float aScrRight = aScrPos.x + aScrRad;		//右辺
-	const float aScrTop = aScrPos.y + aScrRad;		//上辺
-	const float aScrBottom = aScrPos.y - aScrRad;		//下辺
+	const float aScrLeft = aScrPos.x - Infor::RADIUS_32;		//左辺
+	const float aScrRight = aScrPos.x + Infor::RADIUS_32;		//右辺
+	const float aScrTop = aScrPos.y + Infor::RADIUS_32;		//上辺
+	const float aScrBottom = aScrPos.y - Infor::RADIUS_32;		//下辺
 
 	//キャラ1の未来座標の四辺
 	const float nextLeft = aScrLeft + aScrMove.x;				//左辺
@@ -70,10 +70,10 @@ int Utility::iHitCheck(Math::Vector2 aScrPos, Math::Vector2 aScrMove, float aDes
 	const float nextBottom = aScrBottom + aScrMove.y;			//下辺
 
 	//キャラ2の現在座標の四辺
-	const float aDestLeft = aDestPosX - aDesRad;	//左辺
-	const float aDestRight = aDestPosX + aDesRad;	//右辺
-	const float aDestTop = aDestPosY + aDesRad;	//上辺
-	const float aDestBottom = aDestPosY - aDesRad;	//下辺
+	const float aDestLeft = aDestPosX - Infor::RADIUS_32;	//左辺
+	const float aDestRight = aDestPosX + Infor::RADIUS_32;	//右辺
+	const float aDestTop = aDestPosY + Infor::RADIUS_32;	//上辺
+	const float aDestBottom = aDestPosY - Infor::RADIUS_32;	//下辺
 
 	/* 現在座標 :左右当たり判定*/
 	if (aScrRight > aDestLeft && aScrLeft < aDestRight)

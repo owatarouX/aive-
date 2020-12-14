@@ -52,58 +52,13 @@ void Scene::Init()
 	//コンソール作成
 	//m_player.CreateConsole();
 
-	Reset();
-
-}
-
-void Scene::Release()
-{
-	//m_player.DestroyConsole();
-
-	m_playerTex.Release();
-	m_slashTex.Release();
-	m_bulletTex.Release();
-	m_bombTex.Release();
-	m_mapTex.Release();
-	m_enemyTex.Release();
-	titleTex.Release();
-	ExpTex.Release();
-
-	delete spriteFont;
-}
-
-void Scene::ImGuiUpdate()
-{
-	//return;
-
-	ImGui::SetNextWindowPos(ImVec2(20, 20), ImGuiSetCond_Once);
-	ImGui::SetNextWindowSize(ImVec2(200, 300), ImGuiSetCond_Once);
-
-	// デバッグウィンドウ
-	if (ImGui::Begin("Debug Window"))
-	{
-		ImGui::Text("FPS : %d", APP.m_fps);
-		ImGui::Text("playerX : %.2f", m_player.GetPos().x);
-		ImGui::Text("playerY : %.2f", m_player.GetPos().y);
-		ImGui::Text("HP : %d", m_player.GetHp());
-		ImGui::Text("slashPosX : %f", m_player.GetSword().x);
-		ImGui::Text("slashPosY : %f", m_player.GetSword().y);
-	}
-	ImGui::End();
-}
-
-//初期化リセット
-void Scene::Reset()
-{
 	//テクスチャ
 	m_playerTex.Load("Texture/Player/player.png");
-	m_bulletTex.Load("Texture/Player/shuriken.png");
-	m_slashTex.Load("Texture/Player/slash.png");
-	m_bombTex.Load("Texture/Player/bomb.png");
 	m_mapTex.Load("Texture/Map/Map1.png");
 	m_enemyTex.Load("Texture/Enemy/enemy.png");
 	titleTex.Load("Texture/Title/Op.png");
-	ExpTex.Load("Texture/Title/ex.png");
+	exTex.Load("Texture/Title/ex.png");
+	m_bulletTex.Load("Texture/Player/shuriken.png");
 
 	//マップ
 	m_map.Init();
@@ -115,8 +70,6 @@ void Scene::Reset()
 	m_player.SetTexture(&m_playerTex);
 	m_player.SetOwner(this);
 	m_player.SetBulletTexture(&m_bulletTex);
-	m_player.SetSlashTexture(&m_slashTex);
-	m_player.SetBombTexture(&m_bombTex);
 
 
 	//敵
@@ -128,7 +81,7 @@ void Scene::Reset()
 	}
 
 	m_enemy[0].SetConfiguration(
-		Math::Vector2(-300.0f, -1144.0f),	// X,Y座標
+		Math::Vector2(0.0f, 0.0f),	// X,Y座標
 		Math::Vector2(5.0f, 1.0f));	// X,Yの移動量
 
 	m_enemy[1].SetConfiguration(
@@ -141,7 +94,7 @@ void Scene::Reset()
 
 
 	//初期シーン　タイトル
-	sceneType = eSceneGame;	//0:タイトル　1:ゲーム本編
+	sceneType = eSceneTitle;	//0:タイトル　1:ゲーム本編
 
 	//キー制御
 	keyFlg = 0;		//0:押してない1:押している
@@ -158,6 +111,38 @@ void Scene::Reset()
 	//タイトルスタートボタン
 	TitleStartPos = { 488, -243 };
 	TitleStartFlg = false;
+}
+
+void Scene::Release()
+{
+	//m_player.DestroyConsole();
+
+	m_playerTex.Release();
+	m_mapTex.Release();
+	m_enemyTex.Release();
+	titleTex.Release();
+	m_bulletTex.Release();
+	exTex.Release();
+
+	delete spriteFont;
+}
+
+void Scene::ImGuiUpdate()
+{
+	//return;
+
+	ImGui::SetNextWindowPos(ImVec2(200, 200), ImGuiSetCond_Once);
+	ImGui::SetNextWindowSize(ImVec2(200, 300), ImGuiSetCond_Once);
+
+	// デバッグウィンドウ
+	if (ImGui::Begin("Debug Window"))
+	{
+		ImGui::Text("FPS : %d", APP.m_fps);
+		ImGui::Text("playerX : %.2f", m_player.GetPos().x);
+		ImGui::Text("playerY : %.2f", m_player.GetPos().y);
+		ImGui::Text("HP : %d", m_player.GetHp());
+	}
+	ImGui::End();
 }
 
 //マップクラス取得
@@ -270,7 +255,6 @@ void Scene::TitleDraw()
 
 }
 
-
 //ゲーム:更新
 void Scene::GameUpdate()
 {
@@ -295,7 +279,6 @@ void Scene::GameUpdate()
 	{
 		if (keyFlg == 0)
 		{
-			Reset();
 			keyFlg = 1;
 			sceneType = eSceneTitle;//タイトルへ
 		}
@@ -312,13 +295,13 @@ void Scene::GameDraw()
 {
 	m_map.Draw();
 
+	//プレイヤー
+	m_player.Draw();
+
 	for (int i = 0; i < ENEMY_MAX; i++)
 	{
 		m_enemy[i].Draw();		// 敵：描画
 	}
-	//プレイヤー
-	m_player.Draw();
-
 }
 
 //説明:更新
@@ -366,7 +349,7 @@ void Scene::ExplanationDraw()
 {
 	Titlemat = DirectX::XMMatrixTranslation(0, 0, 0);//ここは座標
 	SHADER.m_spriteShader.SetMatrix(Titlemat);
-	SHADER.m_spriteShader.DrawTex(&ExpTex, Math::Rectangle(0, 0, 1280, 720), 1.0f);
+	SHADER.m_spriteShader.DrawTex(&exTex, Math::Rectangle(0, 0, 1280, 720), 1.0f);
 
 	if (TitleStartFlg)
 	{
@@ -375,7 +358,6 @@ void Scene::ExplanationDraw()
 		SHADER.m_spriteShader.DrawBox(TitleStartPos.x, TitleStartPos.y, 80, 80, &color, false);
 	}
 }
-
 
 //マウス座標取得関数
 void Scene::GetMousePos()

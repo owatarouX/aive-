@@ -37,13 +37,11 @@ private:
 	
 	//テクスチャ関連
 	KdTexture m_playerTex;
-	KdTexture m_bulletTex;
-	KdTexture m_slashTex;
-	KdTexture m_bombTex;
 	KdTexture m_mapTex;
 	KdTexture m_enemyTex;
 	KdTexture titleTex;
-	KdTexture ExpTex;
+	KdTexture m_bulletTex;
+	KdTexture exTex;
 
 
 	eSceneType sceneType;	//0:タイトル　1:ゲーム本編
@@ -88,9 +86,6 @@ public:
 	// GUI処理
 	void ImGuiUpdate();
 
-	//初期化リセット
-	void Reset();
-
 	//敵クラス取得
 	CEnemy* GetEnemy();
 
@@ -100,18 +95,23 @@ public:
 	//プレイヤークラス取得
 	CPlayer GetPlayer();
 	
-	//タイトル
-	void TitleUpdate();//更新
-	void TitleDraw();//描画
+	//タイトル更新
+	void TitleUpdate();
 
-	//ゲーム　
-	void GameUpdate(); //更新
-	void GameDraw();//描画
+	//タイトル描画
+	void TitleDraw();
 
-	//説明　
-	void ExplanationUpdate(); //更新
-	void ExplanationDraw(); //描画
+	//ゲーム　更新
+	void GameUpdate();
 
+	//ゲーム描画
+	void GameDraw();
+
+	//説明　更新
+	void ExplanationUpdate();
+
+	//説明描画
+	void ExplanationDraw();
 
 	//マウス座標取得
 	void GetMousePos();
