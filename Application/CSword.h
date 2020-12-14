@@ -10,10 +10,14 @@ public:
 	void Updata();
 	void Draw();
 	void SetTexture(KdTexture* apTexture);
-	
+	const Math::Vector2 CSword::GetPos();		//座標取得
+	const Math::Vector2 CSword::GetMove();		//移動量取得
+
 	//攻撃処理
 	void Slash(Math::Vector2 Pos, const int Direct);
 	const bool bGetSlash();		//フラグ状態取得
+
+	void SetScrollPos(Math::Vector2 scrPos);
 
 private:
 
@@ -24,4 +28,6 @@ private:
 	bool			 m_bSlash;		//攻撃フラグ
 	int				 m_slashCnt;	//攻撃発動時間
 	int				 m_direction;	//方向
+	Math::Vector2	 m_scrollPos;
+
 };

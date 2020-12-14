@@ -19,6 +19,7 @@ void CBomb::Init()
 
 	m_bAlive = false;
 
+	m_scrollPos = { 0,0 };
 }
 
 void CBomb::Updata()
@@ -34,7 +35,7 @@ void CBomb::Updata()
 	m_aCnt++;
 
 	//çsóÒçÏê¨
-	m_mat = DirectX::XMMatrixTranslation(m_pos.x, m_pos.y, 0.0f);
+	m_mat = DirectX::XMMatrixTranslation(m_pos.x - m_scrollPos.x, m_pos.y - m_scrollPos.y, 0.0f);
 }
 
 void CBomb::Draw()
@@ -76,4 +77,9 @@ void CBomb::InstBomb(const Math::Vector2 aBombPos)
 const Math::Vector2 CBomb::GetPos()
 {
 	return Math::Vector2();
+}
+
+void CBomb::SetScrollPos(Math::Vector2 scrPos)
+{
+	m_scrollPos = scrPos;
 }

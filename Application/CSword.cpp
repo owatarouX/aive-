@@ -20,6 +20,8 @@ void CSword::Init()
 	m_move = { 0,0 };
 	m_bSlash = false;
 	m_direction = 0;
+	m_scrollPos = { 0,0 };
+
 }
 
 //XVˆ—
@@ -27,19 +29,25 @@ void CSword::Updata()
 {
 	if (!m_bSlash)return;
 
+	m_move = { 0,0 };
+
 	//UŒ‚•ûŒü
 	switch (m_direction) {
 	case 0:
-		m_pos.y += 64;
+		m_move.y = 64;
+		m_pos.y += m_move.y;
 		break;
 	case 1:
-		m_pos.y -= 64;
+		m_move.y = -64;
+		m_pos.y += m_move.y;
 		break;
 	case 2:
-		m_pos.x -= 64;
+		m_move.x = -64;
+		m_pos.x += m_move.x;
 		break;
 	case 3:
-		m_pos.x += 64;
+		m_move.x = 64;
+		m_pos.x += m_move.x;
 		break;
 	}
 
@@ -73,6 +81,18 @@ void CSword::SetTexture(KdTexture* apTexture)
 	m_pTexture = apTexture;
 }
 
+//À•Wæ“¾
+const Math::Vector2 CSword::GetPos()
+{
+	return m_pos;
+}
+
+//ˆÚ“®—Êæ“¾
+const Math::Vector2 CSword::GetMove()
+{
+	return m_move;
+}
+
 //UŒ‚ˆ—
 void CSword::Slash(Math::Vector2 Pos, const int Direct)
 {
@@ -85,4 +105,10 @@ void CSword::Slash(Math::Vector2 Pos, const int Direct)
 const bool CSword::bGetSlash()
 {
 	return m_bSlash;
+}
+
+
+void CSword::SetScrollPos(Math::Vector2 scrPos)
+{
+	m_scrollPos = scrPos;
 }

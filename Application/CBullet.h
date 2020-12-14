@@ -19,6 +19,7 @@ public:
 	const Math::Vector2 CBullet::GetMove();		//ˆÚ“®—ÊŽæ“¾
 	const float CBullet::GetRadius();			//”¼ŒaŽæ“¾
 
+	void SetScrollPos(Math::Vector2 scrPos);
 
 private:
 	KdTexture* m_pTexture;		//‰æ‘œ
@@ -28,4 +29,6 @@ private:
 	Math::Matrix m_mat;
 	bool m_bAlive;
 	const float m_radius;
+	Math::Vector2	 m_scrollPos;
+
 };

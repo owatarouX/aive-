@@ -88,6 +88,9 @@ public:
 	// GUI処理
 	void ImGuiUpdate();
 
+	//初期化リセット
+	void Reset();
+
 	//敵クラス取得
 	CEnemy* GetEnemy();
 
@@ -97,23 +100,18 @@ public:
 	//プレイヤークラス取得
 	CPlayer GetPlayer();
 	
-	//タイトル更新
-	void TitleUpdate();
+	//タイトル
+	void TitleUpdate();//更新
+	void TitleDraw();//描画
 
-	//タイトル描画
-	void TitleDraw();
+	//ゲーム　
+	void GameUpdate(); //更新
+	void GameDraw();//描画
 
-	//ゲーム　更新
-	void GameUpdate();
+	//説明　
+	void ExplanationUpdate(); //更新
+	void ExplanationDraw(); //描画
 
-	//ゲーム描画
-	void GameDraw();
-
-	//説明　更新
-	void ExplanationUpdate();
-
-	//説明描画
-	void ExplanationDraw();
 
 	//マウス座標取得
 	void GetMousePos();

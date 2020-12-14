@@ -17,6 +17,8 @@ public:
 	void InstBomb(const Math::Vector2 aBombPos);
 	const Math::Vector2 CBomb::GetPos();		//À•Wæ“¾
 
+	void SetScrollPos(Math::Vector2 scrPos);
+
 private:
 	KdTexture* m_pTexture;		//‰æ‘œ
 	Math::Vector2 m_pos;
@@ -24,4 +26,5 @@ private:
 	bool m_bAlive;
 	int	 m_aCnt;
 	int m_aTimer;
+	Math::Vector2 m_scrollPos;
 };

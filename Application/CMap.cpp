@@ -107,9 +107,21 @@ void CMap::Draw()
 			{
 				chipRect = { 320,0,64,64 };
 			}
-			else if (m_ChipData[h][w] == 6)
+			else if (m_ChipData[h][w] == 7)
 			{
 				chipRect = { 384,0,64,64 };
+			}
+			else if (m_ChipData[h][w] == 6)
+			{
+				chipRect = {448 ,0,64,64 };
+			}
+			else if (m_ChipData[h][w] == 9)
+			{
+				chipRect = {512 ,0,64,64 };
+			}
+			else if (m_ChipData[h][w] == 8)
+			{
+				chipRect = { 576,0,64,64 };
 			}
 			SHADER.m_spriteShader.SetMatrix(m_mat[h][w]);
 			SHADER.m_spriteShader.DrawTex(m_pTexture, chipRect, 1.0f);
@@ -216,7 +228,7 @@ void CMap::LoadMapFile()
 	// ファイル読み込み
 	if (mapData == OutSide)	//マップ１
 	{
-		if ((fp = fopen("Data/Map/map1.txt", "r")) != nullptr)
+		if ((fp = fopen("Data/Map/map1-40.txt", "r")) != nullptr)
 		{
 			char ch; // 文字入れ物
 			int h = 0;
@@ -242,10 +254,10 @@ void CMap::LoadMapFile()
 	}
 	else if (mapData == OneFloor)	//マップ２
 	{
-		constexpr int MAP_CHIP_H = 16;					//縦サイズ
-		constexpr int MAP_CHIP_W = 30;					//横サイズ
+		//constexpr int MAP_CHIP_H = 26;					//縦サイズ
+		//constexpr int MAP_CHIP_W = 28;					//横サイズ
 
-		if ((fp = fopen("Data/Map/map2.txt", "r")) != nullptr)
+		if ((fp = fopen("Data/Map/map40.txt", "r")) != nullptr)
 		{
 			char ch; // 文字入れ物
 			int h = 0;

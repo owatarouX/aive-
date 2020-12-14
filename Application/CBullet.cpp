@@ -18,10 +18,11 @@ CBullet::~CBullet()
 
 void CBullet::Init()
 {
-	m_moveVal.x = 30.0f;
-	m_moveVal.y = 30.0f;
+	m_moveVal.x = 15.0f;
+	m_moveVal.y = 15.0f;
 
 	m_bAlive = false;
+	m_scrollPos = { 0,0 };
 }
 
 void CBullet::Updata()
@@ -45,8 +46,8 @@ void CBullet::Updata()
 	}
 	
 
-	//à⁄ìÆçsóÒçÏê¨
-	m_mat = DirectX::XMMatrixTranslation(m_pos.x, m_pos.y, 0.0f);
+	//à⁄ìÆçsóÒ
+	m_mat = DirectX::XMMatrixTranslation(m_pos.x-m_scrollPos.x, m_pos.y - m_scrollPos.y, 0.0f);
 
 
 }
@@ -108,6 +109,11 @@ const Math::Vector2 CBullet::GetMove()
 const float CBullet::GetRadius()
 {
 	return m_radius;
+}
+
+void CBullet::SetScrollPos(Math::Vector2 scrPos)
+{
+	m_scrollPos = scrPos;
 }
 
 

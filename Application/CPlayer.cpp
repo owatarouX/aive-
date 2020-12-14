@@ -12,6 +12,7 @@ CPlayer::CPlayer()
 	,m_hp(0)
 	,m_hpCount()
 	, m_alpha(1.0f)
+	, m_HitFlg(false)
 {
 }
 
@@ -39,6 +40,9 @@ void CPlayer::Init()
 
 	//透明度
 	m_alpha = 1.0f;
+
+	//敵と当たったか判定
+	m_HitFlg = false;
 
 	//初期方向
 	m_direction = Down;
@@ -103,6 +107,7 @@ void CPlayer::Updata()
 		m_direction = Right;
 	}
 
+
 	//左クリック攻撃
 	if (GetAsyncKeyState(VK_LBUTTON) & 0x8000)
 	{
@@ -120,6 +125,7 @@ void CPlayer::Updata()
 		default:
 			break;
 		}
+
 	}
 
 	//右クリック攻撃
@@ -139,6 +145,7 @@ void CPlayer::Updata()
 		default:
 			break;
 		}
+
 	}
 
 	//仮武器変更
@@ -175,16 +182,20 @@ void CPlayer::Updata()
 	m_mat = DirectX::XMMatrixTranslation(m_pos.x - ScrollPos.x, m_pos.y - ScrollPos.y, 0.0f);
 
 
+	
 	//弾の更新
 	for (int i = 0; i < BULLET_MAX; i++)
 	{
+		m_bulletList[i].SetScrollPos(ScrollPos);
 		m_bulletList[i].Updata();
 	}
 
 	//刀攻撃更新
+	m_swordList.SetScrollPos(ScrollPos);
 	m_swordList.Updata();
 
 	//爆弾の更新
+	m_bombList.SetScrollPos(ScrollPos);
 	m_bombList.Updata();
 
 }
@@ -265,11 +276,6 @@ void CPlayer::SetOwner(Scene* apOwner)
 	m_pOwner = apOwner;
 }
 
-Math::Vector2 CPlayer::GetScrPos()
-{
-	CMap* map = m_pOwner->GetMap();
-	return map->GetscrollPos();
-}
 
 //自機座標取得
 const Math::Vector2 CPlayer::GetPos()
@@ -282,6 +288,12 @@ const int CPlayer::GetHp()
 {
 	return m_hp;
 }
+
+Math::Vector2 CPlayer::GetSword()
+{
+	return m_swordList.GetPos();
+}
+
 
 //マップとの当たり判定
 void CPlayer::HitCheckMap()
@@ -356,67 +368,91 @@ void CPlayer::HitCheckEnemy()
 	
 	for (int e = 0; e < ENEMY_MAX; e++)
 	{
-		CEnemy enemy = m_pOwner->GetEnemy()[e];		//敵クラス取得
-		Math::Vector2 enePos = enemy.GetPos();		//敵の座標取得
+		CEnemy* enemy = m_pOwner->GetEnemy()+e;		//敵クラス取得
+		Math::Vector2 enePos = enemy->GetPos();		//敵の座標取得
 
-		////////////////////////////////////////////////////////////////
-		//		プレイヤーのヒットチェック								
-		////////////////////////////////////////////////////////////////
-		int hit = Utility::iHitCheck(m_pos, m_moveVal, enePos.x, enePos.y, Infor::RADIUS_32, Infor::RADIUS_32);
-
-		//敵の現在座標の四辺
-		const float ENEMY_LEFT = enePos.x - Infor::RADIUS_32;	//左辺
-		const float ENEMY_RIGHT = enePos.x + Infor::RADIUS_32;	//右辺
-		const float ENEMY_TOP = enePos.y + Infor::RADIUS_32;		//上辺
-		const float ENEMY_BOTTOM = enePos.y - Infor::RADIUS_32;	//下辺
-
-		const float KnockBack = 40;		//ノックバック量
-		const float ALPHA = 0.5;		//ヒット時の透過値
-		//当たり判定分岐処理
-		//1:上	2:下 3:左 4:右
-		switch (hit)
+		//生きてる敵のみ
+		if (enemy->IsAlive())
 		{
-		case 1:
-			m_pos.y = ENEMY_TOP + Infor::RADIUS_32 + KnockBack;
-			m_moveVal.y = 0;
-			m_alpha = ALPHA;	//半透明化
-			m_hp -= 1;			//体力減少
-			break;
-		case 2:
-			m_pos.y = ENEMY_BOTTOM - Infor::RADIUS_32 - KnockBack;
-			m_moveVal.y = 0;
-			m_alpha = ALPHA;
-			m_hp -= 1;
-			break;
-		case 3:
-			m_pos.x = ENEMY_LEFT - Infor::RADIUS_32 - KnockBack;
-			m_moveVal.x = 0;
-			m_alpha = ALPHA;
-			m_hp -= 1;
-			break;
-		case 4:
-			m_pos.x = ENEMY_RIGHT + Infor::RADIUS_32 + KnockBack;
-			m_moveVal.x = 0;
-			m_alpha = ALPHA;
-			m_hp -= 1;
-			break;
-		default:
-			break;
-		}
+			////////////////////////////////////////////////////////////////
+			//		プレイヤーのヒットチェック								
+			////////////////////////////////////////////////////////////////
+			int player_hit = Utility::iHitCheck(m_pos, m_moveVal, enePos.x, enePos.y, Infor::RADIUS_32, Infor::RADIUS_32);
 
-		////////////////////////////////////////////////////////////////
-		//		弾のヒットチェック								
-		////////////////////////////////////////////////////////////////
-		for (int i = 0;i < BULLET_MAX;i++)
-		{
-			bool hit = true;
-			hit	= Utility::bHitCheck(m_bulletList[i].GetPos(), m_bulletList[i].GetMove(), enePos, Infor::RADIUS_8, Infor::RADIUS_32);
-			
-			//ヒット時
-			if (!hit)
+			//敵の現在座標の四辺
+			const float ENEMY_LEFT = enePos.x - Infor::RADIUS_32;	//左辺
+			const float ENEMY_RIGHT = enePos.x + Infor::RADIUS_32;	//右辺
+			const float ENEMY_TOP = enePos.y + Infor::RADIUS_32;		//上辺
+			const float ENEMY_BOTTOM = enePos.y - Infor::RADIUS_32;	//下辺
+
+			const float KnockBack = 40;		//ノックバック量
+			const float ALPHA = 0.5;		//ヒット時の透過値
+			//当たり判定分岐処理
+			//1:上	2:下 3:左 4:右
+			switch (player_hit)
 			{
-				enemy.HitBullet();					//敵のフラグ下げ
-				m_bulletList[i].SetAlive(false);	//弾のフラグ下げ
+			case 1:
+				m_pos.y = ENEMY_TOP + Infor::RADIUS_32 + KnockBack;
+				m_moveVal.y = 0;
+				m_alpha = ALPHA;	//半透明化
+				m_hp -= 1;			//体力減少
+				m_HitFlg = true;
+				break;
+			case 2:
+				m_pos.y = ENEMY_BOTTOM - Infor::RADIUS_32 - KnockBack;
+				m_moveVal.y = 0;
+				m_alpha = ALPHA;
+				m_hp -= 1;
+				m_HitFlg = true;
+				break;
+			case 3:
+				m_pos.x = ENEMY_LEFT - Infor::RADIUS_32 - KnockBack;
+				m_moveVal.x = 0;
+				m_alpha = ALPHA;
+				m_hp -= 1;
+				m_HitFlg = true;
+				break;
+			case 4:
+				m_pos.x = ENEMY_RIGHT + Infor::RADIUS_32 + KnockBack;
+				m_moveVal.x = 0;
+				m_alpha = ALPHA;
+				m_hp -= 1;
+				m_HitFlg = true;
+				break;
+			default:
+				break;
+			}
+
+			////////////////////////////////////////////////////////////////
+			//		弾のヒットチェック								
+			////////////////////////////////////////////////////////////////
+			for (int i = 0; i < BULLET_MAX; i++)
+			{
+				//生きてる弾のみ
+				if (m_bulletList[i].IsAlive())
+				{
+					bool bullet_hit = true;
+					bullet_hit = Utility::bHitCheck(m_bulletList[i].GetPos(), m_bulletList[i].GetMove(), enePos, Infor::RADIUS_8, Infor::RADIUS_32);
+
+					//ヒット時
+					if (!bullet_hit)
+					{
+						enemy->HitBullet();					//敵のフラグ下げ
+						m_bulletList[i].SetAlive(false);	//弾のフラグ下げ
+						break;
+					}
+				}
+			}
+			////////////////////////////////////////////////////////////////
+			//		斬撃のヒットチェック								
+			////////////////////////////////////////////////////////////////
+
+			bool slash_hit = Utility::bHitCheck(m_swordList.GetPos(), m_swordList.GetMove(), enePos, Infor::RADIUS_32, Infor::RADIUS_32);
+
+			//ヒット時
+			if (!slash_hit)
+			{
+				enemy->HitBullet();				//敵のフラグ下げ
 			}
 		}
 	}
@@ -425,13 +461,14 @@ void CPlayer::HitCheckEnemy()
 //無敵時間
 void CPlayer::InviTime()
 {
-	if (m_alpha < 1)	//半透明状態なら
+	if (m_HitFlg)	//半透明状態なら
 	{
-		const int CNT_MAX = 60;	//無敵時間
+		const int CNT_MAX = 120;	//無敵時間
 		if (m_hpCount >= CNT_MAX)
 		{
 			m_alpha = 1.0f;
 			m_hpCount = 0;
+			m_HitFlg = false;
 		}
 		m_hpCount++;
 	}
@@ -448,7 +485,7 @@ void CPlayer::SetShuriken()
 	{
 		if (!m_bulletList[i].IsAlive())
 		{
-			m_bulletList[i].Shot(m_pos - ScrollPos, m_direction);
+			m_bulletList[i].Shot(m_pos /*- ScrollPos*/, m_direction);
 			break;
 		}
 	}
@@ -474,7 +511,7 @@ void CPlayer::SetBomb()
 
 	if (!m_bombList.IsAlive())
 	{
-		m_bombList.InstBomb(m_pos - ScrollPos);
+		m_bombList.InstBomb(m_pos);
 	}
 }
 

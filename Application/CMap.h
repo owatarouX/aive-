@@ -10,8 +10,8 @@ enum eSceneData
 
 class Scene;
 
-constexpr int MAP_CHIP_H = 26;					//縦サイズ
-constexpr int MAP_CHIP_W = 28;					//横サイズ
+constexpr int MAP_CHIP_H = 40;					//縦サイズ
+constexpr int MAP_CHIP_W = 40;					//横サイズ
 
 class CMap
 {

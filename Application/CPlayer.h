@@ -24,7 +24,7 @@ enum eClick
 };
 
 //手裏剣の要素数
-constexpr int BULLET_MAX = 20;
+constexpr int BULLET_MAX = 2;
 
 //プレイヤークラス
 class CPlayer
@@ -45,10 +45,10 @@ public:
 	void SetBombTexture(KdTexture* apTexture);
 	void SetOwner(Scene* apOwner);
 
-	Math::Vector2 GetScrPos();
 	const Math::Vector2 GetPos();		//プレイヤー座標取得
 	const int GetHp();
 	
+	Math::Vector2 GetSword();
 
 private:		//外部からアクセス不可
 
@@ -65,6 +65,7 @@ private:		//外部からアクセス不可
 	int	m_hp;					//HP
 	int m_hpCount;				//無敵時間
 	float m_alpha;				//画像の透明度
+	bool m_HitFlg;				//敵と当たったか判定
 
 	void HitCheckMap();			//マップとの当たり判定
 	void HitCheckEnemy();		//敵との当たり判定
