@@ -128,7 +128,7 @@ void Scene::Reset()
 	}
 
 	m_enemy[0].SetConfiguration(
-		Math::Vector2(0.0f, 0.0f),	// X,YÀ•W
+		Math::Vector2(-300.0f, -1144.0f),	// X,YÀ•W
 		Math::Vector2(5.0f, 1.0f));	// X,Y‚ÌˆÚ“®—Ê
 
 	m_enemy[1].SetConfiguration(

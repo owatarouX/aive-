@@ -148,6 +148,8 @@ void CPlayer::Updata()
 
 	}
 
+	SetSword();
+
 	//仮武器変更
 	if (GetAsyncKeyState('E') & 0x8000)
 	{
@@ -364,8 +366,6 @@ void CPlayer::HitCheckMap()
 //敵との当たり判定
 void CPlayer::HitCheckEnemy()
 {
-	if (m_alpha < 1) return;	//無敵時間があるとき
-	
 	for (int e = 0; e < ENEMY_MAX; e++)
 	{
 		CEnemy* enemy = m_pOwner->GetEnemy()+e;		//敵クラス取得
@@ -377,52 +377,54 @@ void CPlayer::HitCheckEnemy()
 			////////////////////////////////////////////////////////////////
 			//		プレイヤーのヒットチェック								
 			////////////////////////////////////////////////////////////////
-			int player_hit = Utility::iHitCheck(m_pos, m_moveVal, enePos.x, enePos.y, Infor::RADIUS_32, Infor::RADIUS_32);
-
-			//敵の現在座標の四辺
-			const float ENEMY_LEFT = enePos.x - Infor::RADIUS_32;	//左辺
-			const float ENEMY_RIGHT = enePos.x + Infor::RADIUS_32;	//右辺
-			const float ENEMY_TOP = enePos.y + Infor::RADIUS_32;		//上辺
-			const float ENEMY_BOTTOM = enePos.y - Infor::RADIUS_32;	//下辺
-
-			const float KnockBack = 40;		//ノックバック量
-			const float ALPHA = 0.5;		//ヒット時の透過値
-			//当たり判定分岐処理
-			//1:上	2:下 3:左 4:右
-			switch (player_hit)
+			if (!m_HitFlg)
 			{
-			case 1:
-				m_pos.y = ENEMY_TOP + Infor::RADIUS_32 + KnockBack;
-				m_moveVal.y = 0;
-				m_alpha = ALPHA;	//半透明化
-				m_hp -= 1;			//体力減少
-				m_HitFlg = true;
-				break;
-			case 2:
-				m_pos.y = ENEMY_BOTTOM - Infor::RADIUS_32 - KnockBack;
-				m_moveVal.y = 0;
-				m_alpha = ALPHA;
-				m_hp -= 1;
-				m_HitFlg = true;
-				break;
-			case 3:
-				m_pos.x = ENEMY_LEFT - Infor::RADIUS_32 - KnockBack;
-				m_moveVal.x = 0;
-				m_alpha = ALPHA;
-				m_hp -= 1;
-				m_HitFlg = true;
-				break;
-			case 4:
-				m_pos.x = ENEMY_RIGHT + Infor::RADIUS_32 + KnockBack;
-				m_moveVal.x = 0;
-				m_alpha = ALPHA;
-				m_hp -= 1;
-				m_HitFlg = true;
-				break;
-			default:
-				break;
-			}
+				int player_hit = Utility::iHitCheck(m_pos, m_moveVal, enePos.x, enePos.y, Infor::RADIUS_32, Infor::RADIUS_32);
 
+				//敵の現在座標の四辺
+				const float ENEMY_LEFT = enePos.x - Infor::RADIUS_32;	//左辺
+				const float ENEMY_RIGHT = enePos.x + Infor::RADIUS_32;	//右辺
+				const float ENEMY_TOP = enePos.y + Infor::RADIUS_32;		//上辺
+				const float ENEMY_BOTTOM = enePos.y - Infor::RADIUS_32;	//下辺
+
+				const float KnockBack = 40;		//ノックバック量
+				const float ALPHA = 0.5;		//ヒット時の透過値
+				//当たり判定分岐処理
+				//1:上	2:下 3:左 4:右
+				switch (player_hit)
+				{
+				case 1:
+					m_pos.y = ENEMY_TOP + Infor::RADIUS_32 + KnockBack;
+					m_moveVal.y = 0;
+					m_alpha = ALPHA;	//半透明化
+					m_hp -= 1;			//体力減少
+					m_HitFlg = true;
+					break;
+				case 2:
+					m_pos.y = ENEMY_BOTTOM - Infor::RADIUS_32 - KnockBack;
+					m_moveVal.y = 0;
+					m_alpha = ALPHA;
+					m_hp -= 1;
+					m_HitFlg = true;
+					break;
+				case 3:
+					m_pos.x = ENEMY_LEFT - Infor::RADIUS_32 - KnockBack;
+					m_moveVal.x = 0;
+					m_alpha = ALPHA;
+					m_hp -= 1;
+					m_HitFlg = true;
+					break;
+				case 4:
+					m_pos.x = ENEMY_RIGHT + Infor::RADIUS_32 + KnockBack;
+					m_moveVal.x = 0;
+					m_alpha = ALPHA;
+					m_hp -= 1;
+					m_HitFlg = true;
+					break;
+				default:
+					break;
+				}
+			}
 			////////////////////////////////////////////////////////////////
 			//		弾のヒットチェック								
 			////////////////////////////////////////////////////////////////
@@ -447,7 +449,8 @@ void CPlayer::HitCheckEnemy()
 			//		斬撃のヒットチェック								
 			////////////////////////////////////////////////////////////////
 
-			bool slash_hit = Utility::bHitCheck(m_swordList.GetPos(), m_swordList.GetMove(), enePos, Infor::RADIUS_32, Infor::RADIUS_32);
+			bool slash_hit = true;
+			slash_hit = Utility::bHitCheck(m_swordList.GetPos(), m_swordList.GetMove(), enePos, Infor::RADIUS_32, Infor::RADIUS_32);
 
 			//ヒット時
 			if (!slash_hit)

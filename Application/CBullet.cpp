@@ -18,7 +18,7 @@ CBullet::~CBullet()
 
 void CBullet::Init()
 {
-	m_moveVal.x = 30.0f;
+	m_moveVal.x = 15.0f;
 	m_moveVal.y = 15.0f;
 
 	m_bAlive = false;

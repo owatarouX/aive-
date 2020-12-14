@@ -17,7 +17,7 @@ CSword::~CSword()
 void CSword::Init()
 {
 	m_pos = { 0,0 };
-	m_move = { 0,0 };
+	m_move = { 64,64 };
 	m_bSlash = false;
 	m_direction = 0;
 	m_scrollPos = { 0,0 };
@@ -29,24 +29,18 @@ void CSword::Updata()
 {
 	if (!m_bSlash)return;
 
-	m_move = { 0,0 };
-
 	//çUåÇï˚å¸
 	switch (m_direction) {
 	case 0:
-		m_move.y = 64;
 		m_pos.y += m_move.y;
 		break;
 	case 1:
-		m_move.y = -64;
-		m_pos.y += m_move.y;
+		m_pos.y -= m_move.y;
 		break;
 	case 2:
-		m_move.x = -64;
-		m_pos.x += m_move.x;
+		m_pos.x -= m_move.x;
 		break;
 	case 3:
-		m_move.x = 64;
 		m_pos.x += m_move.x;
 		break;
 	}
