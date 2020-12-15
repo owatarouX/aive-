@@ -169,6 +169,7 @@ void CMap::SetOwner(Scene* apOwner)
 	m_pOwner = apOwner;
 }
 
+//マップデータの変更
 void CMap::SetMapData()
 {
 	if (mapData == OutSide)
@@ -223,31 +224,28 @@ void CMap::LoadMapFile()
 {
 	FILE* fp; // ファイルの情報を格納する構造体
 
-	
-
 	// ファイル読み込み
 	if (mapData == OutSide)	//マップ１
 	{
-		if ((fp = fopen("Data/Map/map1-40.txt", "r")) != nullptr)
+		if ((fp = fopen("Data/Map/map1-40.csv", "r")) != nullptr)
 		{
-			char ch; // 文字入れ物
-			int h = 0;
-			int w = 0;
+			int h;
+			int w;
 
-			while ((ch = fgetc(fp)) != EOF)
+			for (h = 0; h < 40; h++)
 			{
-
-				if (ch == '\n') // 改行の場合
+				for (w = 0; w < 40; w++)
 				{
-					h++;
-					w = 0;
+					fscanf(fp, "%d,", &m_ChipData[h][w]);
 				}
-				else //その他
+			}
+			for (h = 0; h < 40; h++)
+			{
+				for (w = 0; w < 40; w++)
 				{
-					//1文字を数字として格納 　↓文字から数字に変換
-					m_ChipData[h][w] = ch - 0x30;
-					w++;
+					printf("%d ", &m_ChipData[h][w]);
 				}
+				printf("\n");
 			}
 			fclose(fp);
 		}
@@ -282,8 +280,6 @@ void CMap::LoadMapFile()
 		}
 	}
 	
-
-
 	// コンソール出力データを確認
 	for (int h = 0; h < MAP_CHIP_H; h++)
 	{
@@ -304,7 +300,6 @@ void CMap::CreateConsole()
 
 	//標準入出力を割り当てる
 	freopen_s(&fp_c, "CONOUT$", "w", stdout);
-	//	freopen_s(&fp_c, "CONIN$", "r", stdin);
 }
 
 // コンソール破壊

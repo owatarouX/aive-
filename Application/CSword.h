@@ -7,7 +7,7 @@ public:
 	~CSword();
 
 	void Init();
-	void Updata();
+	void Updata(Math::Vector2 playerPos);
 	void Draw();
 	void SetTexture(KdTexture* apTexture);
 	const Math::Vector2 CSword::GetPos();		//座標取得
@@ -17,7 +17,7 @@ public:
 	void Slash(Math::Vector2 Pos, const int Direct);
 	const bool bGetSlash();		//フラグ状態取得
 
-	void SetScrollPos(Math::Vector2 scrPos);
+	void SetScrollPos(Math::Vector2 scrPos);	//スクロール量取得
 
 private:
 
@@ -28,6 +28,6 @@ private:
 	bool			 m_bSlash;		//攻撃フラグ
 	int				 m_slashCnt;	//攻撃発動時間
 	int				 m_direction;	//方向
-	Math::Vector2	 m_scrollPos;
+	Math::Vector2	 m_scrollPos;	//スクロール量取得用
 
 };

@@ -86,8 +86,9 @@ void Scene::ImGuiUpdate()
 		ImGui::Text("playerX : %.2f", m_player.GetPos().x);
 		ImGui::Text("playerY : %.2f", m_player.GetPos().y);
 		ImGui::Text("HP : %d", m_player.GetHp());
-		ImGui::Text("slashPosX : %f", m_player.GetSword().x);
-		ImGui::Text("slashPosY : %f", m_player.GetSword().y);
+		ImGui::Text("blastX : %f", m_player.GetBlast().x);
+		ImGui::Text("blastY : %f", m_player.GetBlast().y);
+
 	}
 	ImGui::End();
 }
@@ -95,11 +96,17 @@ void Scene::ImGuiUpdate()
 //初期化リセット
 void Scene::Reset()
 {
+	/*bool load = false;
+	load =
+	_ASSERT_EXPR(load == true, L"読み込み失敗");*/
+
 	//テクスチャ
 	m_playerTex.Load("Texture/Player/player.png");
 	m_bulletTex.Load("Texture/Player/shuriken.png");
 	m_slashTex.Load("Texture/Player/slash.png");
 	m_bombTex.Load("Texture/Player/bomb.png");
+	m_blastTex.Load("Texture/Player/blast.png");
+
 	m_mapTex.Load("Texture/Map/Map1.png");
 	m_enemyTex.Load("Texture/Enemy/enemy.png");
 	titleTex.Load("Texture/Title/Op.png");
@@ -117,6 +124,7 @@ void Scene::Reset()
 	m_player.SetBulletTexture(&m_bulletTex);
 	m_player.SetSlashTexture(&m_slashTex);
 	m_player.SetBombTexture(&m_bombTex);
+	m_player.SetBlastTexture(&m_blastTex);
 
 
 	//敵
@@ -128,7 +136,7 @@ void Scene::Reset()
 	}
 
 	m_enemy[0].SetConfiguration(
-		Math::Vector2(-300.0f, -1144.0f),	// X,Y座標
+		Math::Vector2(0.0f, 0.0f),	// X,Y座標
 		Math::Vector2(5.0f, 1.0f));	// X,Yの移動量
 
 	m_enemy[1].SetConfiguration(
@@ -274,6 +282,8 @@ void Scene::TitleDraw()
 //ゲーム:更新
 void Scene::GameUpdate()
 {
+	GetMousePos();
+
 	//マップ
 	m_map.Update();
 

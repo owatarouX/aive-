@@ -39,16 +39,22 @@ public:
 	void Updata();
 	void Draw();
 	const bool IsAlive();
+
+	//セッター
 	void SetTexture(KdTexture* apTexture);
 	void SetBulletTexture(KdTexture* apTexture);
 	void SetSlashTexture(KdTexture* apTexture);
 	void SetBombTexture(KdTexture* apTexture);
+	void SetBlastTexture(KdTexture* apTexture);
 	void SetOwner(Scene* apOwner);
 
+	//ゲッター
 	const Math::Vector2 GetPos();		//プレイヤー座標取得
 	const int GetHp();
 	
-	Math::Vector2 GetSword();
+	//確認用
+	Math::Vector2 GetBlast();
+	Math::Vector2 GetBomb();
 
 private:		//外部からアクセス不可
 
@@ -77,4 +83,6 @@ private:		//外部からアクセス不可
 	void SetSword();
 	CBomb  m_bombList;
 	void SetBomb();
+
+	
 };

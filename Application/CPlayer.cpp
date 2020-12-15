@@ -148,7 +148,9 @@ void CPlayer::Updata()
 
 	}
 
-	SetSword();
+	//仮発射
+	SetBomb();
+	//SetSword();
 
 	//仮武器変更
 	if (GetAsyncKeyState('E') & 0x8000)
@@ -157,10 +159,13 @@ void CPlayer::Updata()
 	}
 
 	//仮マップデータ切り替え
-	if (GetAsyncKeyState(VK_SPACE) & 0x8000)
+	if (m_pos.x >= 512 && m_pos.x <= 540 &&
+		m_pos.y >= 104 && m_pos.y <= 232)
 	{
 		map->SetMapData();
 		map->LoadMapFile();
+		m_pos.x = -515;
+		m_pos.y = -2000;
 	}
 
 	//敵との当たり判定
@@ -194,7 +199,7 @@ void CPlayer::Updata()
 
 	//刀攻撃更新
 	m_swordList.SetScrollPos(ScrollPos);
-	m_swordList.Updata();
+	m_swordList.Updata(m_pos);
 
 	//爆弾の更新
 	m_bombList.SetScrollPos(ScrollPos);
@@ -270,6 +275,14 @@ void CPlayer::SetBombTexture(KdTexture* apTexture)
 	m_bombList.SetTexture(apTexture);
 }
 
+//テクスチャ設定：爆発
+void CPlayer::SetBlastTexture(KdTexture* apTexture)
+{
+	if (apTexture == nullptr)return;
+
+	m_bombList.SetBlastTexture(apTexture);
+}
+
 //オーナー設定
 void CPlayer::SetOwner(Scene* apOwner)
 {
@@ -291,11 +304,15 @@ const int CPlayer::GetHp()
 	return m_hp;
 }
 
-Math::Vector2 CPlayer::GetSword()
+Math::Vector2 CPlayer::GetBlast()
 {
-	return m_swordList.GetPos();
+	return m_bombList.GetBlastPos();
 }
 
+Math::Vector2 CPlayer::GetBomb()
+{
+	return m_bombList.GetPos();
+}
 
 //マップとの当たり判定
 void CPlayer::HitCheckMap()
@@ -457,6 +474,22 @@ void CPlayer::HitCheckEnemy()
 			{
 				enemy->HitBullet();				//敵のフラグ下げ
 			}
+			////////////////////////////////////////////////////////////////
+			//		爆発のヒットチェック								
+			////////////////////////////////////////////////////////////////
+
+			//爆発している時
+			if (m_bombList.GetBlastAlive())
+			{
+				bool blast_hit = true;
+				blast_hit = Utility::bHitCheck(m_bombList.GetBlastPos(), { 0,0 }, enePos, Infor::RADIUS_32, Infor::RADIUS_32);
+
+				//ヒット時
+				if (!blast_hit)
+				{
+					enemy->HitBullet();				//敵のフラグ下げ
+				}
+			}
 		}
 	}
 }
@@ -514,7 +547,7 @@ void CPlayer::SetBomb()
 
 	if (!m_bombList.IsAlive())
 	{
-		m_bombList.InstBomb(m_pos);
+		m_bombList.InstBomb(m_pos/* - ScrollPos*/);
 	}
 }
 

@@ -206,7 +206,7 @@ void CEnemy::HitCheckMap()
 	{
 		for (int w = 0; w < MAP_CHIP_W; w++)
 		{
-			if (chipData[h][w] >= 1)
+			if (chipData[h][w] >= 6)
 			{
 				continue;
 			}
@@ -243,26 +243,3 @@ void CEnemy::HitCheckMap()
 		}
 	}
 }
-
-////“G‚Æ‚Ì“–‚½‚è”»’è
-//void CPlayer::HitCheckEnemy()
-//{
-//	for (int e = 0; e < ENEMY_MAX; e++)
-//	{
-//		////////////////////////////////////////////////////////////////
-//		//		’e‚Ìƒqƒbƒgƒ`ƒFƒbƒN								
-//		////////////////////////////////////////////////////////////////
-//		for (int i = 0; i < BULLET_MAX; i++)
-//		{
-//			bool hit = true;
-//			hit = Utility::bHitCheck(m_bulletList[i].GetPos(), m_bulletList[i].GetMove(), m_pos, Infor::RADIUS_8, Infor::RADIUS_32);
-//
-//			//ƒqƒbƒgŽž
-//			if (!hit)
-//			{
-//				m_bAlive = false;					//“G‚Ìƒtƒ‰ƒO‰º‚°
-//				m_bulletList[i].SetAlive(false);	//’e‚Ìƒtƒ‰ƒO‰º‚°
-//			}
-//		}
-//	}
-//}

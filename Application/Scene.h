@@ -40,6 +40,7 @@ private:
 	KdTexture m_bulletTex;
 	KdTexture m_slashTex;
 	KdTexture m_bombTex;
+	KdTexture m_blastTex;
 	KdTexture m_mapTex;
 	KdTexture m_enemyTex;
 	KdTexture titleTex;

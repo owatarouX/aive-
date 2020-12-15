@@ -1,7 +1,5 @@
 #pragma once
 
-class Scene;
-
 class CBlast
 {
 public:
@@ -16,6 +14,10 @@ public:
 	void SetAlive(const float bAlive);			//フラグ状態設定
 	void Blast(const Math::Vector2 aBombPos);
 
+	void SetScrollPos(Math::Vector2 scrPos);	//スクロール量取得
+
+	Math::Vector2 GetPos();
+
 private:
 	KdTexture* m_pTexture;		//画像
 	Math::Vector2 m_pos;
@@ -23,4 +25,6 @@ private:
 	bool m_bAlive;
 	int	 m_aCnt;
 	int m_aTimer;
+
+	Math::Vector2 m_scrollPos;
 };
