@@ -86,8 +86,8 @@ void Scene::ImGuiUpdate()
 		ImGui::Text("playerX : %.2f", m_player.GetPos().x);
 		ImGui::Text("playerY : %.2f", m_player.GetPos().y);
 		ImGui::Text("HP : %d", m_player.GetHp());
-		ImGui::Text("blastX : %f", m_player.GetBlast().x);
-		ImGui::Text("blastY : %f", m_player.GetBlast().y);
+		ImGui::Text("RClick : %d", m_player.GetR());
+		ImGui::Text("LClick : %d", m_player.GetL());
 
 	}
 	ImGui::End();
@@ -136,16 +136,50 @@ void Scene::Reset()
 	}
 
 	m_enemy[0].SetConfiguration(
-		Math::Vector2(0.0f, 0.0f),	// X,Y座標
-		Math::Vector2(5.0f, 1.0f));	// X,Yの移動量
+		Math::Vector2(0.0f, -1080.0f),		// X,Y座標
+		Math::Vector2(5.0f, 1.0f));		// X,Yの移動量
 
 	m_enemy[1].SetConfiguration(
-		Math::Vector2(200.0f, 250.0f),
-		Math::Vector2(100.0f, 1.0f));
+		Math::Vector2(300.0f, -1080.0f),	// X,Y座標
+		Math::Vector2(5.0f, 1.0f));		// X,Yの移動量
+
 
 	m_enemy[2].SetConfiguration(
-		Math::Vector2(-300.0f, -150.0f),
-		Math::Vector2(5.0f, 1.0f));
+		Math::Vector2(824.0f, -600.0f),// X,Y座標
+		Math::Vector2(5.0f, 1.0f));		// X,Yの移動量
+	m_enemy[3].SetConfiguration(
+		Math::Vector2(889.0f, -600.0f),// X,Y座標
+		Math::Vector2(5.0f, 1.0f));		// X,Yの移動量
+	m_enemy[4].SetConfiguration(
+		Math::Vector2(949.0f, -600.0f),// X,Y座標
+		Math::Vector2(5.0f, 1.0f));		// X,Yの移動量
+	m_enemy[5].SetConfiguration(
+		Math::Vector2(1024.0f, -600.0f),// X,Y座標
+		Math::Vector2(5.0f, 1.0f));		// X,Yの移動量
+
+	m_enemy[6].SetConfiguration(
+		Math::Vector2(512.0f, 115.0f),// X,Y座標
+		Math::Vector2(5.0f, 1.0f));		// X,Yの移動量
+	m_enemy[7].SetConfiguration(
+		Math::Vector2(512.0f, 174.0f),// X,Y座標
+		Math::Vector2(5.0f, 1.0f));		// X,Yの移動量
+	m_enemy[8].SetConfiguration(
+		Math::Vector2(512.0f, 229.0f),// X,Y座標
+		Math::Vector2(5.0f, 1.0f));		// X,Yの移動量
+
+	m_enemy[9].SetConfiguration(
+		Math::Vector2(175.0f, -920.0f),// X,Y座標
+		Math::Vector2(5.0f, 1.0f));		// X,Yの移動量
+	m_enemy[10].SetConfiguration(
+		Math::Vector2(175.0f, -1176.0f),// X,Y座標
+		Math::Vector2(5.0f, 1.0f));		// X,Yの移動量
+
+	m_enemy[11].SetConfiguration(
+		Math::Vector2(725.0f, -920.0f),// X,Y座標
+		Math::Vector2(5.0f, 1.0f));		// X,Yの移動量
+	m_enemy[12].SetConfiguration(
+		Math::Vector2(725.0f, -1176.0f),// X,Y座標
+		Math::Vector2(5.0f, 1.0f));		// X,Yの移動量
 
 
 	//初期シーン　タイトル

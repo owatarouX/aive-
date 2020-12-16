@@ -55,10 +55,11 @@ void CBomb::Updata()
 //•`‰æ
 void CBomb::Draw()
 {
-	if (!m_bAlive) return;
-
-	SHADER.m_spriteShader.SetMatrix(m_mat);
-	SHADER.m_spriteShader.DrawTex(m_pTexture, Math::Rectangle(m_aCnt/m_aTimer*64, 0, 64, 64), 1.0f);
+	if (m_bAlive)
+	{
+		SHADER.m_spriteShader.SetMatrix(m_mat);
+		SHADER.m_spriteShader.DrawTex(m_pTexture, Math::Rectangle(m_aCnt / m_aTimer * 64, 0, 64, 64), 1.0f);
+	}
 
 	//”š”­•`‰æ
 	m_blastList.Draw();

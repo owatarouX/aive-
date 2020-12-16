@@ -13,6 +13,8 @@ CPlayer::CPlayer()
 	,m_hpCount()
 	, m_alpha(1.0f)
 	, m_HitFlg(false)
+	, m_bRClick(false)
+	, m_bLClick(false)
 {
 }
 
@@ -35,7 +37,7 @@ void CPlayer::Init()
 	m_bAlive = true;
 	
 	//体力
-	m_hp = 5;
+	m_hp = 100;
 	m_hpCount = 0;
 
 	//透明度
@@ -50,6 +52,14 @@ void CPlayer::Init()
 	//初期装備
 	m_LClick = eShuriken;
 	m_RClick = eSword;
+
+	//左右クリックフラグ
+	m_bRClick = false;
+	m_bLClick = false;
+
+	//武器チェンジフラグ
+	m_bLChange = false;
+	m_bRChange = false;
 
 	//弾の初期化
 	for (int i = 0; i < BULLET_MAX; i++)
@@ -68,20 +78,18 @@ void CPlayer::Init()
 //更新
 void CPlayer::Updata()
 {
-	//マップクラス取得
-	CMap* map = m_pOwner->GetMap();
-
-
 	//生存時のみ処理
 	if (!m_bAlive) return;
-	
+	//マップクラス取得
+	CMap* map = m_pOwner->GetMap();
+	//スクロール量取得
+	Math::Vector2 ScrollPos = map->GetscrollPos();
+
 	m_moveVal = { 0,0 };
 
 	//移動量
 	const float MOVE_AMOUNT = 5;
 
-	//スクロール量取得
-	Math::Vector2 ScrollPos = map->GetscrollPos();
 
 	/* キー入力 */
 
@@ -111,52 +119,74 @@ void CPlayer::Updata()
 	//左クリック攻撃
 	if (GetAsyncKeyState(VK_LBUTTON) & 0x8000)
 	{
-		switch (m_LClick)
+		if (!m_bLClick)
 		{
-		case eSword:	//刀
-			SetSword();
-			break;
-		case eShuriken:	//手裏剣
-			SetShuriken();
-			break;
-		case eBomb:		//爆弾
-			SetBomb();
-			break;
-		default:
-			break;
+			switch (m_LClick)
+			{
+			case eSword:	//刀
+				SetSword();
+				break;
+			case eShuriken:	//手裏剣
+				SetShuriken();
+				break;
+			case eBomb:		//爆弾
+				SetBomb();
+				break;
+			default:
+				break;
+			}
+			m_bLClick = true;
 		}
-
 	}
+	else m_bLClick = false;
 
 	//右クリック攻撃
 	if (GetAsyncKeyState(VK_RBUTTON) & 0x8000)
 	{
-		switch (m_RClick)
+		if (!m_bRClick)
 		{
-		case eSword:
-			SetSword();
-			break;
-		case eShuriken:
-			SetShuriken();
-			break;
-		case eBomb:
-			SetBomb();
-			break;
-		default:
-			break;
+			switch (m_RClick)
+			{
+			case eSword:
+				SetSword();
+				break;
+			case eShuriken:
+				SetShuriken();
+				break;
+			case eBomb:
+				SetBomb();
+				break;
+			default:
+				break;
+			}
+			m_bRClick = true;
 		}
-
 	}
+	else m_bRClick = false;
 
-	//仮発射
-	SetBomb();
-	//SetSword();
 
 	//仮武器変更
+	//左クリック武器
+	if (GetAsyncKeyState('Q') & 0x8000)
+	{
+		if (!m_bLChange)
+		{
+			m_LClick = ChangeItem(m_LClick);
+			m_bLChange = true;
+		}
+	}
+	else m_bLChange = false;
+
+	//右クリック武器
 	if (GetAsyncKeyState('E') & 0x8000)
 	{
-		m_RClick = eBomb;
+		if (!m_bRChange)
+		{
+			m_RClick = ChangeItem(m_RClick);
+			m_bRChange = true;
+		}
 	}
+	else m_bRChange = false;
 
 	//仮マップデータ切り替え
 	if (m_pos.x >= 512 && m_pos.x <= 540 &&
@@ -173,6 +203,9 @@ void CPlayer::Updata()
 	
 	//マップとの当たり判定
 	HitCheckMap();
+
+	//爆弾との当たり判定
+	HitCheckBomb();
 
 	//無敵時間
 	InviTime();
@@ -304,14 +337,16 @@ const int CPlayer::GetHp()
 	return m_hp;
 }
 
-Math::Vector2 CPlayer::GetBlast()
+const int CPlayer::GetR()
 {
-	return m_bombList.GetBlastPos();
+	int a = m_RClick;
+	return a;
 }
 
-Math::Vector2 CPlayer::GetBomb()
+const int CPlayer::GetL()
 {
-	return m_bombList.GetPos();
+	int a = m_LClick;
+	return a;
 }
 
 //マップとの当たり判定
@@ -404,35 +439,34 @@ void CPlayer::HitCheckEnemy()
 				const float ENEMY_TOP = enePos.y + Infor::RADIUS_32;		//上辺
 				const float ENEMY_BOTTOM = enePos.y - Infor::RADIUS_32;	//下辺
 
-				const float KnockBack = 40;		//ノックバック量
 				const float ALPHA = 0.5;		//ヒット時の透過値
 				//当たり判定分岐処理
 				//1:上	2:下 3:左 4:右
 				switch (player_hit)
 				{
 				case 1:
-					m_pos.y = ENEMY_TOP + Infor::RADIUS_32 + KnockBack;
+					m_pos.y = ENEMY_TOP + Infor::RADIUS_32;
 					m_moveVal.y = 0;
 					m_alpha = ALPHA;	//半透明化
 					m_hp -= 1;			//体力減少
 					m_HitFlg = true;
 					break;
 				case 2:
-					m_pos.y = ENEMY_BOTTOM - Infor::RADIUS_32 - KnockBack;
+					m_pos.y = ENEMY_BOTTOM - Infor::RADIUS_32;
 					m_moveVal.y = 0;
 					m_alpha = ALPHA;
 					m_hp -= 1;
 					m_HitFlg = true;
 					break;
 				case 3:
-					m_pos.x = ENEMY_LEFT - Infor::RADIUS_32 - KnockBack;
+					m_pos.x = ENEMY_LEFT - Infor::RADIUS_32;
 					m_moveVal.x = 0;
 					m_alpha = ALPHA;
 					m_hp -= 1;
 					m_HitFlg = true;
 					break;
 				case 4:
-					m_pos.x = ENEMY_RIGHT + Infor::RADIUS_32 + KnockBack;
+					m_pos.x = ENEMY_RIGHT + Infor::RADIUS_32;
 					m_moveVal.x = 0;
 					m_alpha = ALPHA;
 					m_hp -= 1;
@@ -466,13 +500,17 @@ void CPlayer::HitCheckEnemy()
 			//		斬撃のヒットチェック								
 			////////////////////////////////////////////////////////////////
 
-			bool slash_hit = true;
-			slash_hit = Utility::bHitCheck(m_swordList.GetPos(), m_swordList.GetMove(), enePos, Infor::RADIUS_32, Infor::RADIUS_32);
-
-			//ヒット時
-			if (!slash_hit)
+			//斬撃を出している間
+			if (m_swordList.bGetSlash())
 			{
-				enemy->HitBullet();				//敵のフラグ下げ
+				bool slash_hit = true;
+				slash_hit = Utility::bHitCheck(m_swordList.GetPos(), m_swordList.GetMove(), enePos, Infor::RADIUS_32, Infor::RADIUS_32);
+
+				//ヒット時
+				if (!slash_hit)
+				{
+					enemy->HitBullet();				//敵のフラグ下げ
+				}
 			}
 			////////////////////////////////////////////////////////////////
 			//		爆発のヒットチェック								
@@ -494,10 +532,30 @@ void CPlayer::HitCheckEnemy()
 	}
 }
 
+//爆弾との当たり判定
+void CPlayer::HitCheckBomb()
+{
+	if (m_HitFlg) return;
+
+	//爆発している時
+	if (m_bombList.GetBlastAlive())
+	{
+		bool blast_hit = true;
+		blast_hit = Utility::bHitCheck(m_pos, m_moveVal, m_bombList.GetBlastPos(), Infor::RADIUS_32, Infor::RADIUS_32);
+
+		//ヒット時
+		if (!blast_hit)
+		{
+			m_hp-=5;
+			m_HitFlg = true;
+		}
+	}
+}
+
 //無敵時間
 void CPlayer::InviTime()
 {
-	if (m_HitFlg)	//半透明状態なら
+	if (m_HitFlg)	//プレイヤーが当たったら
 	{
 		const int CNT_MAX = 120;	//無敵時間
 		if (m_hpCount >= CNT_MAX)
@@ -505,8 +563,32 @@ void CPlayer::InviTime()
 			m_alpha = 1.0f;
 			m_hpCount = 0;
 			m_HitFlg = false;
+			return;
 		}
 		m_hpCount++;
+
+		//点滅
+		if (m_hpCount % 10 == 0)
+		{
+			if (m_alpha < 1)m_alpha = 1;
+			else m_alpha = 0.5;
+		}
+	}
+}
+
+//武器切り替え関数
+eClick CPlayer::ChangeItem(eClick click)
+{
+	switch (click)
+	{
+	case eShuriken:
+		return eSword;
+	case eSword:
+		return eBomb;
+	case eBomb:
+		return eShuriken;
+	default:
+		break;
 	}
 }
 

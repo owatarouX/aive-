@@ -20,7 +20,7 @@ struct t_Mouse
 };
 
 //“G‚Ì—v‘f”
-constexpr int ENEMY_MAX = 3;
+constexpr int ENEMY_MAX = 13;
 
 class Scene
 {

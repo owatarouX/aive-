@@ -22,6 +22,9 @@ public:		// 外部からアクセス可
 		Math::Vector2	aMoveVal);	// 座標と移動量をシーンから設定する関数
 	float GetAngleDeg(Math::Vector2 src,
 		Math::Vector2 dest);	// 距離を求める関数
+	float GetDistance(Math::Vector2 src,
+		Math::Vector2 dest);// 距離を求める関数
+
 	void SetOwner(Scene* apOwner);
 	void HitBullet();			//弾に当たった時の処理
 
@@ -38,7 +41,8 @@ private:	// 外部からアクセス不可
 	const float		m_radius;	// 半径
 	float			deg;		// 角度
 
-	bool				HomingFlg;	// ホーミングするかしないか 
+	bool				HomingFlg;		// ホーミングするかしないか 
+	bool				VisibilityFlg;	// 円判定に入ったか?
 
 	void HitCheckMap();		//マップとの当たり判定
 

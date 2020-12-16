@@ -16,6 +16,7 @@ CEnemy::CEnemy()
 	, m_radius(32.0f)
 	, deg(0.0f)
 	, HomingFlg(true)
+	, VisibilityFlg(false)
 {
 }
 
@@ -34,8 +35,10 @@ void CEnemy::Init()
 	m_bAlive = true;		// フラグ
 
 	deg = 0.0f;				// 角度
-	HomingFlg = true;
 
+	HomingFlg = true;		// 追跡するか
+
+	VisibilityFlg=false;	// 円判定に入ったか
 }
 
 // 更新
@@ -43,17 +46,29 @@ void CEnemy::Update()
 {
 	if (!m_bAlive) return;	// フラグ確認
 	
-	m_pos.x += m_moveVal.x;
-	m_pos.y += m_moveVal.y;
+	CPlayer player = m_pOwner->GetPlayer();		// プレイヤークラスの取得
+	Math::Vector2 playerPos = player.GetPos();	// プレイヤー座標をplayerPosに入力
+
+	if (GetDistance(m_pos, playerPos) < 200)	// GetDistanceで引数二つの距離を測る
+												// 200ないならif文内のプログラムを実行
+	{
+		VisibilityFlg = true;					// 範囲内Flgを立てる
+	}
+	if (VisibilityFlg)							// 範囲内なら
+	{
+		m_pos.x += m_moveVal.x;	// X += moveX
+		m_pos.y += m_moveVal.y;	// Y += moveY
+		Homing();				// 追跡関数呼び出し
+	}
 
 	//Moveleftandright();
 	
-	if (HomingFlg)// ホーミングするか？
+	/*if (HomingFlg)// ホーミングするか？
 	{
 		Homing();
 		//HomingFlg = false;	// 一度だけしかホーミングしない
 	//  ↑の1行を消せば常にホーミングする
-	}
+	}*/
 
 	//マップとの当たり判定
 	HitCheckMap();
@@ -177,6 +192,17 @@ float CEnemy::GetAngleDeg(Math::Vector2 src,Math::Vector2 dest)
 	//角度を返す
 	return deg;
 }
+
+float CEnemy::GetDistance(Math::Vector2 src, Math::Vector2 dest)
+{
+	float a, b, c;
+
+	a = dest.x - src.x;			// 底辺を求める
+	b = dest.y - src.y;			// 高さを求める
+	c = sqrt(a * a + b * b);	// 斜辺を求める<-これが直線距離
+	return c;
+}
+
 
 void CEnemy::SetOwner(Scene* apOwner)
 {
