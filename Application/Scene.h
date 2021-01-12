@@ -43,8 +43,11 @@ private:
 	KdTexture m_blastTex;
 	KdTexture m_mapTex;
 	KdTexture m_enemyTex;
+	KdTexture m_hpbarTex;
+	KdTexture m_hpTex;
 	KdTexture titleTex;
 	KdTexture ExpTex;
+	
 
 
 	eSceneType sceneType;	//0:タイトル　1:ゲーム本編
@@ -58,6 +61,13 @@ private:
 
 	
 	Math::Matrix Titlemat;
+
+	//UI:HP
+	Math::Matrix m_hpbarmat;//HPbarの行列
+	Math::Matrix m_hpmat;//HPの行列
+	float m_hpBar;	//現在のHPバー
+	float m_damage;//受けたダメージ
+
 
 	Math::Matrix Wmat;
 	Math::Matrix Smat;
@@ -113,6 +123,9 @@ public:
 	void ExplanationUpdate(); //更新
 	void ExplanationDraw(); //描画
 
+	//UI
+	void UIUpdata();//更新
+	void UIDraw();//描画
 
 	//マウス座標取得
 	void GetMousePos();

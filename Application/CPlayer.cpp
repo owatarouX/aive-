@@ -15,7 +15,9 @@ CPlayer::CPlayer()
 	, m_HitFlg(false)
 	, m_bRClick(false)
 	, m_bLClick(false)
-{
+	, m_aTimer(15)
+	, m_aflame(5)
+{	
 }
 
 CPlayer::~CPlayer()
@@ -176,6 +178,7 @@ void CPlayer::Updata()
 		}
 	}
 	else m_bLChange = false;
+	
 
 	//右クリック武器
 	if (GetAsyncKeyState('E') & 0x8000)
@@ -238,6 +241,12 @@ void CPlayer::Updata()
 	m_bombList.SetScrollPos(ScrollPos);
 	m_bombList.Updata();
 
+	//アニメーション
+	const int CNT_MAX = m_aTimer * m_aflame;
+	if (m_aCnt >= CNT_MAX+m_aTimer-1)
+		m_aCnt = 0;
+	m_aCnt++;
+
 }
 
 //描画
@@ -259,10 +268,9 @@ void CPlayer::Draw()
 
 	//プレイヤー描画
 	SHADER.m_spriteShader.SetMatrix(m_mat);
-	Math::Rectangle scrRect = { 0,0,64,64 }; // テクスチャ座標
+	Math::Rectangle scrRect = { -20,Animation(m_aCnt,348),160,64 }; // テクスチャ座標
 	Math::Color color = { 1,1,1, m_alpha }; // 色（RGBAの順番で　0.0～1.0）
-	SHADER.m_spriteShader.DrawTex(m_pTexture, 0, 0, 64, 64, &scrRect, &color, Math::Vector2(0.5f, 0.5f));
-
+	SHADER.m_spriteShader.DrawTex(m_pTexture, 0, 0, 160, 64, &scrRect, &color, Math::Vector2(0.5f, 0.5f));
 }
 
 //フラグ状態取得
@@ -631,5 +639,10 @@ void CPlayer::SetBomb()
 	{
 		m_bombList.InstBomb(m_pos/* - ScrollPos*/);
 	}
+}
+
+int CPlayer::Animation(int cnt, const int xtex)
+{
+	return cnt / m_aTimer * 116 + 38 + xtex;
 }
 

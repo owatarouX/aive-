@@ -51,7 +51,6 @@ public:
 	//ゲッター
 	const Math::Vector2 GetPos();		//プレイヤー座標取得
 	const int GetHp();
-	
 	const int GetR();
 	const int GetL();
 
@@ -78,6 +77,10 @@ private:		//外部からアクセス不可
 	bool			 m_bRChange;//右武器変更フラグ
 	bool			 m_bLChange;//左武器変更フラグ
 
+	int	 m_aCnt	;	//アニメーションカウント
+	int m_aTimer;	//アニメーションを何fに1枚動かす
+	int m_aflame;	//アニメーション枚数
+
 
 	void HitCheckMap();			//マップとの当たり判定
 	void HitCheckEnemy();		//敵との当たり判定
@@ -92,5 +95,6 @@ private:		//外部からアクセス不可
 	CBomb  m_bombList;
 	void SetBomb();
 
+	int Animation(int cnt, const int xtex);
 	
 };

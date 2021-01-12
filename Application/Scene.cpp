@@ -44,7 +44,6 @@ void Scene::Update()
 		ExplanationUpdate();
 		break;
 	}
-
 }
 
 void Scene::Init()
@@ -66,6 +65,8 @@ void Scene::Release()
 	m_bombTex.Release();
 	m_mapTex.Release();
 	m_enemyTex.Release();
+	m_hpbarTex.Release();
+	m_hpTex.Release();
 	titleTex.Release();
 	ExpTex.Release();
 
@@ -109,6 +110,8 @@ void Scene::Reset()
 
 	m_mapTex.Load("Texture/Map/Map1.png");
 	m_enemyTex.Load("Texture/Enemy/enemy.png");
+	m_hpbarTex.Load("Texture/UI/hpbar.png");
+	m_hpTex.Load("Texture/UI/hp.png");
 	titleTex.Load("Texture/Title/Op.png");
 	ExpTex.Load("Texture/Title/ex.png");
 
@@ -324,6 +327,9 @@ void Scene::GameUpdate()
 	//プレイヤー
 	m_player.Updata();
 
+	//UI
+	UIUpdata();
+
 	//プレイヤー死亡でリザルト画面へ
 	/*if (!m_player.IsAlive())
 	{
@@ -355,6 +361,7 @@ void Scene::GameUpdate()
 void Scene::GameDraw()
 {
 	m_map.Draw();
+	UIDraw();
 
 	for (int i = 0; i < ENEMY_MAX; i++)
 	{
@@ -362,7 +369,6 @@ void Scene::GameDraw()
 	}
 	//プレイヤー
 	m_player.Draw();
-
 }
 
 //説明:更新
@@ -420,6 +426,27 @@ void Scene::ExplanationDraw()
 	}
 }
 
+//UI:更新
+void Scene::UIUpdata()
+{
+	m_hpBar = m_player.GetHp();
+	const float damage_max=232*0.01;
+	if (!(m_damage >= 232))
+		m_damage +=damage_max;
+	
+}
+
+//UI:描画
+void Scene::UIDraw()
+{
+	m_hpbarmat = DirectX::XMMatrixTranslation(500,320, 0);//ここは座標
+	SHADER.m_spriteShader.SetMatrix(m_hpbarmat);
+	SHADER.m_spriteShader.DrawTex(&m_hpbarTex, Math::Rectangle(0, 0, 256, 64), 1.0f);
+
+	m_hpmat = DirectX::XMMatrixTranslation(500-m_damage/2, 320, 0);//ここは座標
+	SHADER.m_spriteShader.SetMatrix(m_hpmat);
+	SHADER.m_spriteShader.DrawTex(&m_hpTex, Math::Rectangle(0,0,232-m_damage, 40), 1.0f); //232=max  したい処理m_hpBar-m_damage
+}
 
 //マウス座標取得関数
 void Scene::GetMousePos()
@@ -431,3 +458,4 @@ void Scene::GetMousePos()
 	mouse.cur.y -= Screen::HalfHeight;
 	mouse.cur.y *= -1;
 }
+
